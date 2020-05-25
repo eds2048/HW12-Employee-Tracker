@@ -9,7 +9,6 @@ var connection = mysql.createConnection({
     database: "employee_DB"
 });
 
-
 // start inquirer questions
 // connect to the mysql server and sql database
 connection.connect(function (err) {
@@ -59,10 +58,6 @@ function start() {
                     break;
             }
 
-
-
-
-
         });
 }
 
@@ -76,23 +71,22 @@ function start() {
     });
     }
 
-
-function viewEmployeesByDept() {
-    connection.query("SELECT * FROM employee_DB where ", function (err, res) {
+// Unfinished: Viewing employees by Dept
+    function viewEmployeesByDept() {
+        connection.query("SELECT * FROM employee_DB where ", function (err, res) {
         if (err) throw err;
         console.log(res);
         connection.end();
-    });
-}
+        });
+    }
 
-
-function addEmployee() {
-    // what is employee first name
-    // what is employee  name name
+   // what is employee first name
+    // what is employee  last name
     // what is employee's role
     // who is employee's manager
+    function addEmployee() {
     inquirer
-        .prompt([{
+        .prompt({
             name: "firstname",
             type:"input",
             message:"What is employee's first name?"
@@ -102,35 +96,91 @@ function addEmployee() {
             type: "input",
             message: "What is employee's last name?"
         },
+        {
             name: "role",
             type: "list",
             message: "What is employee's role?",
             choices:['Sales Lead','Sales Person','Software Engineer','Account Manager','Accountant']
-        ])
+        })
         .then(function(answer)
-            connection.query(
-                "INSERT INTO employee_db SET?",
+            {
+            var query = "INSERT INTO employee_db SET ?";
+            connection.query(query,
                 {
                 first_name: answer.firstname,
                 last_name: answer.lastname,
                 title: answer.role
                 },
-            function(err{
+            function(err){
                 if(err) throw err;
                 start();
             });
             
-            );
-
         });
+    };
 
 
-    connection.query("INSERT INTO employee_DB", function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        connection.end();
-    });
+
+function removeEmployee() {
+    inquirer
+        .prompt([{
+            name: "employeename",
+            type:"list",
+            message: "Which employee to remove?",
+            choices: [firstname, lastname]
+        }])
+        .then(function(answer){
+            connection.query("DELETE FROM employee WHERE ?",
+                {
+                first_name: answer.firstname,
+                last_name: answer.lastname
+                },
+            function (err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " Employees removed.\n");
+            }
+            );
+        })
 }
+
+function updateEmployeeRole(){
+    inquirer
+        .prompt([{
+            name: "role",
+            type: "list",
+            message: "What is employee's role?",
+            choices: ['Sales Lead', 'Sales Person', 'Software Engineer', 'Account Manager', 'Accountant']
+        }])
+        .then(function (answer){
+            connection.query("INSERT INTO employee_db SET ?",
+                {
+                first_name: answer.firstname,
+                last_name: answer.lastname,
+                title: answer.role
+                },
+            function(err){
+                if(err) throw err;
+                start();
+            });
+            
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
